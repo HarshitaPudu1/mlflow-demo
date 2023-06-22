@@ -1,0 +1,19 @@
+{
+  "scriptFile": "__init__.py",
+  "bindings": [
+    {
+      "name": "myblob",
+      "type": "blobTrigger",
+      "direction": "in",
+      "path": "demo-data",
+      "connection": "demosrcblobaccstrg_STORAGE"
+    },
+    {
+      "name": "$return",
+      "type": "blob",
+      "direction": "out",
+      "path": "demo-data/output-data",
+      "connection": "demodestaccstrg_STORAGE"
+    }
+  ]
+}

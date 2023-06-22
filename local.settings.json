@@ -1,0 +1,11 @@
+{
+  "IsEncrypted": false,
+  "Values": {
+    "AzureWebJobsStorage": "DefaultEndpointsProtocol=https;AccountName=blobstorageaccount8b04cc;AccountKey=oOVa6CNOjw0G1v8plPyARdw/n3uhfKXsxWWmjPg8U3GwflDmDJFFaHMbW9iFDF6T8uVTeTTWinK3+AStg9MVCw==;EndpointSuffix=core.windows.net",
+    "FUNCTIONS_WORKER_RUNTIME": "python",
+    "blobstorageaccount8b04cc_STORAGE": "DefaultEndpointsProtocol=https;AccountName=blobstorageaccount8b04cc;AccountKey=oOVa6CNOjw0G1v8plPyARdw/n3uhfKXsxWWmjPg8U3GwflDmDJFFaHMbW9iFDF6T8uVTeTTWinK3+AStg9MVCw==;EndpointSuffix=core.windows.net",
+    "blobstorageaccountdestination_STORAGE": "DefaultEndpointsProtocol=https;AccountName=blobstrgdestinationacc;AccountKey=v37Qf9R7d8p/sRwVnHG7xNKHxEVrvQANoy1/a7EXwiV0b5TipUdkoh5DX5mbpezY10v2IjhQucnV+AStgSRzSQ==;EndpointSuffix=core.windows.net",
+    "demosrcblobaccstrg_STORAGE": "DefaultEndpointsProtocol=https;AccountName=demosrcblobaccstrg;AccountKey=zLszx1cX2mZthuP7P9qlJoBR2wsB344SC4qDCjk/0ZtKGuRTojaUPkuFzYKWbhdvUNMH+s0Rvqug+AStNjnTvg==;EndpointSuffix=core.windows.net",
+    "demodestaccstrg_STORAGE": "DefaultEndpointsProtocol=https;AccountName=demodestaccstrg;AccountKey=D87qMS2dc1J2kON6ZXwBhAG38vV7yBr4cV5UfXcxkdzck2bcWgaK/XC+F1H5hBWDx2s4YgJzpkCl+AStTDvfbg==;EndpointSuffix=core.windows.net"
+  }
+}

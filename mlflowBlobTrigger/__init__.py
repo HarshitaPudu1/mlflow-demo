@@ -22,20 +22,20 @@ def main(myblob: func.InputStream):
     blob_input_datastore = Datastore.register_azure_blob_container(
            workspace=workspace,
            datastore_name=blob_input_datastore_name,
-           account_name="blobstorageaccount8b04cc",
+           account_name="demosrcblobaccstrg",
            container_name="demo-data",
            account_key="zLszx1cX2mZthuP7P9qlJoBR2wsB344SC4qDCjk/0ZtKGuRTojaUPkuFzYKWbhdvUNMH+s0Rvqug+AStNjnTvg==")
     blob_output_datastore = Datastore.register_azure_blob_container(
            workspace=workspace,
            datastore_name=blob_output_datastore_name,
-           account_name="blobstrgdestinationacc",
+           account_name="demodestaccstrg",
            container_name="demo-data",
            account_key="D87qMS2dc1J2kON6ZXwBhAG38vV7yBr4cV5UfXcxkdzck2bcWgaK/XC+F1H5hBWDx2s4YgJzpkCl+AStTDvfbg==")
-    output_data = PipelineData("output_data", datastore=Datastore(workspace, blob_output_datastore_name))
+    output_data = PipelineData("output-data", datastore=Datastore(workspace, blob_output_datastore_name))
     input_data_1 = DataReference(datastore=Datastore(workspace, blob_input_datastore_name),data_reference_name="departmentdata", 
-                                        path_on_datastore="/department-data.csv")
+                                        path_on_datastore="/departmentsinput1.csv")
     input_data_2 = DataReference(datastore=Datastore(workspace, blob_input_datastore_name),data_reference_name="employeedata", 
-                                        path_on_datastore="/employee-data.csv")
+                                        path_on_datastore="/employeesinput2.csv")
     input_data_version = datetime.now().strftime("%Y%m%d%H%M%S")
     mlflow_env = azureml.core.Environment.from_conda_specification(name="mlflow-env", file_path=Path(__name__).parent / "conda.yml")
     script_name = "validate_and_combine.py"

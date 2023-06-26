@@ -19,12 +19,14 @@ def main(myblob: func.InputStream):
     experiment = Experiment(workspace=workspace, name="taskmlflow")
     blob_output_datastore_name = blob_input_datastore
     blob_input_datastore_name = blob_output_datastore
+    print("creating blob_input_datastore")
     blob_input_datastore = Datastore.register_azure_blob_container(
            workspace=workspace,
            datastore_name=blob_input_datastore_name,
            account_name="demosrcblobaccstrg",
            container_name="demo-data",
            account_key="zLszx1cX2mZthuP7P9qlJoBR2wsB344SC4qDCjk/0ZtKGuRTojaUPkuFzYKWbhdvUNMH+s0Rvqug+AStNjnTvg==")
+    print("creating blob_output_datastore")
     blob_output_datastore = Datastore.register_azure_blob_container(
            workspace=workspace,
            datastore_name=blob_output_datastore_name,
@@ -48,12 +50,14 @@ def main(myblob: func.InputStream):
     compute_config = ComputeInstance.provisioning_configuration(
         vm_size="Standard_DS2_v2"
     )
+    print("create compute instance")
     try:
         compute_instance = ComputeTarget(workspace, compute_name)
         print("Found existing compute instance.")
     except ComputeTargetException:
         compute_instance = ComputeInstance.create(workspace, compute_name, compute_config)
         compute_instance.wait_for_completion(show_output=True)
+    print("validation and combination")
     validation_combination_step = PythonScriptStep(
         name="Validation and Combination",
         source_directory = os.path.dirname(os.path.realpath(__file__)),
@@ -66,6 +70,7 @@ def main(myblob: func.InputStream):
             "environment": mlflow_env
         }
     )
+    print("triggering pipeline")
     pipeline = Pipeline(workspace=workspace, steps=[validation_combination_step])
     print(pipeline)
     pipeline.validate()

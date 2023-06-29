@@ -1,4 +1,5 @@
 import logging
+import time
 import azure.functions as func
 import azureml.core
 from azureml.core import Workspace, Experiment, Datastore
@@ -21,8 +22,8 @@ def main(myblob: func.InputStream):
     )
     experiment = Experiment(workspace=workspace, name="taskmlflow")
 
-    blob_input_datastore_name = "inputdatastore"
-    blob_output_datastore_name = "outputdatastore"
+    blob_input_datastore_name = "inputdatastore2"
+    blob_output_datastore_name = "outputdatastore2"
 
     Datastore.register_azure_blob_container(
         workspace=workspace,
@@ -71,20 +72,30 @@ def main(myblob: func.InputStream):
         "--input2", input_data_2,
         "--output", output_data
     ]
+
     compute_name = "taskmlflowinstance"
-    compute_config = ComputeInstance.provisioning_configuration(
-        vm_size="Standard_DS2_v2"
-    )
 
-    try:
-        compute_instance = ComputeTarget(workspace, compute_name)
-        print("Found existing compute instance.")
-    except ComputeTargetException:
-        compute_instance = ComputeInstance.create(workspace,
-                                                  compute_name,
-                                                  compute_config)
-        compute_instance.wait_for_completion(show_output=True)
+    # compute_config = ComputeInstance.provisioning_configuration(
+    #     vm_size="Standard_DS2_v2"
+    # )
 
+    # try:
+    #     compute_instance = ComputeTarget(workspace, compute_name)
+    #     print("Found existing compute instance.")
+    # except ComputeTargetException:
+    #     compute_instance = ComputeInstance.create(workspace,
+    #                                               compute_name,
+    #                                               compute_config)
+    #     compute_instance.wait_for_completion(show_output=True)
+
+    #     # Handle Azure Function timeout
+    #     raise TimeoutError("Compute instance creation timed out.")
+    
+    # while compute_instance.provisioning_state != 'Succeeded':
+    #     print('Waiting for compute instance to be ready...')
+    #     time.sleep(10)
+    #     compute_instance = ComputeTarget(workspace, compute_name)
+    
     validation_combination_step = PythonScriptStep(
         name="Validation and Combination",
         source_directory=os.path.dirname(os.path.realpath(__file__)),
@@ -98,8 +109,12 @@ def main(myblob: func.InputStream):
 
     pipeline = Pipeline(workspace=workspace,
                         steps=[validation_combination_step])
-    
+
+    print(pipeline)
     pipeline.validate()
-    
-    experiment.submit(pipeline)
-    print("Pipeline job is submitted")
+
+    pipeline_run = experiment.submit(pipeline)
+    print("Pipeline is waiting for completion.")
+    pipeline_run.wait_for_completion()
+
+    logging.info("MLflow pipeline triggered successfully")

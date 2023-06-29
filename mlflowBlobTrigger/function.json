@@ -6,14 +6,14 @@
       "type": "blobTrigger",
       "direction": "in",
       "path": "demo-data",
-      "connection": "blobstorageaccountsource_STORAGE"
+      "connection": "demosrcblobaccstrg_STORAGE"
     },
     {
       "name": "$return",
       "type": "blob",
       "direction": "out",
       "path": "demo-data/output-data",
-      "connection": "blobstorageaccountdestination_STORAGE"
+      "connection": "demodestaccstrg_STORAGE"
     }
   ]
 }

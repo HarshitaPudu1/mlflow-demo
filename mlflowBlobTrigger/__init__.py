@@ -5,25 +5,34 @@ from azureml.core import Workspace, Experiment, Datastore
 from azureml.pipeline.core import PipelineData, Pipeline
 from azureml.data.data_reference import DataReference
 from azureml.pipeline.steps import PythonScriptStep
-# from azureml.core.compute import ComputeTarget, ComputeInstance
-# from azureml.core.compute_target import ComputeTargetException
 from pathlib import Path
 import os
+from azure.common.credentials import InteractiveLoginAuthentication
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
+def authenticate_azure_ml():
+    # Use InteractiveLoginAuthentication to authenticate with Azure
+    interactive_auth = InteractiveLoginAuthentication()
+    creds, _, _ = interactive_auth._authenticate(None)
+    return creds
+
+
 def main(myblob: func.InputStream):
     # Set up Azure ML workspace and experiment
-
     logger.info("Setting up Azure ML workspace and experiment")
+
+    # Authenticate with Azure
+    credentials = authenticate_azure_ml()
 
     workspace = Workspace.get(
         name="demomlflowworkspace",
         subscription_id="3cfa681b-9a6f-4abf-9e24-e4f15f8da808",
-        resource_group="demoAzure-Functions"
+        resource_group="demoAzure-Functions",
+        auth=credentials
     )
     experiment = Experiment(workspace=workspace, name="taskmlflow")
 
@@ -88,6 +97,7 @@ def main(myblob: func.InputStream):
 
     logger.info("Creating validation and combination step")
 
+
     # compute_config = ComputeInstance.provisioning_configuration(
     #     vm_size="Standard_DS2_v2"
     # )
@@ -136,3 +146,4 @@ def main(myblob: func.InputStream):
     pipeline_run.wait_for_completion()
 
     logger.info("MLflow pipeline triggered successfully")
+    

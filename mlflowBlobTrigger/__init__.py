@@ -147,3 +147,4 @@ def main(myblob: func.InputStream):
 
     logger.info("MLflow pipeline triggered successfully")
     
+

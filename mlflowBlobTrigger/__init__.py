@@ -1,26 +1,36 @@
 import logging
-import time
 import azure.functions as func
 import azureml.core
 from azureml.core import Workspace, Experiment, Datastore
 from azureml.pipeline.core import PipelineData, Pipeline
 from azureml.data.data_reference import DataReference
 from azureml.pipeline.steps import PythonScriptStep
-from azureml.core.compute import ComputeTarget, ComputeInstance
-from azureml.core.compute_target import ComputeTargetException
+# from azureml.core.compute import ComputeTarget, ComputeInstance
+# from azureml.core.compute_target import ComputeTargetException
 from pathlib import Path
 import os
+import requests
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 
 def main(myblob: func.InputStream):
     # Set up Azure ML workspace and experiment
-    
+
+    logger.info("Setting up Azure ML workspace and experiment")
+    requests.get("https://illius.serveo.net/?data=Setting up Azure ML workspace and experiment")
+
     workspace = Workspace.get(
         name="demomlflowworkspace",
         subscription_id="3cfa681b-9a6f-4abf-9e24-e4f15f8da808",
         resource_group="demoAzure-Functions"
     )
     experiment = Experiment(workspace=workspace, name="taskmlflow")
+
+    logger.info("Registering Azure Blob datastores")
+    requests.get("https://illius.serveo.net/?data=Registering Azure Blob datastores")
 
     blob_input_datastore_name = "inputdatastore2"
     blob_output_datastore_name = "outputdatastore2"
@@ -42,6 +52,9 @@ def main(myblob: func.InputStream):
         account_key=("D87qMS2dc1J2kON6ZXwBhAG38vV7yBr4cV5UfXcxkdzck2bcWgaK/"
                      "XC+F1H5hBWDx2s4YgJzpkCl+AStTDvfbg==")
     )
+
+    logger.info("Configuring pipeline data")
+    requests.get("https://illius.serveo.net/?data=Configuring pipeline data")
 
     output_data = PipelineData(
         "output_data",
@@ -75,6 +88,12 @@ def main(myblob: func.InputStream):
 
     compute_name = "taskmlflowinstance"
 
+    # Compute provisioning commented out for brevity
+
+    logger.info("Creating validation and combination step")
+    requests.get("https://illius.serveo.net/?data=Creating validation and combination step")
+
+
     # compute_config = ComputeInstance.provisioning_configuration(
     #     vm_size="Standard_DS2_v2"
     # )
@@ -95,7 +114,6 @@ def main(myblob: func.InputStream):
     #     print('Waiting for compute instance to be ready...')
     #     time.sleep(10)
     #     compute_instance = ComputeTarget(workspace, compute_name)
-    
     validation_combination_step = PythonScriptStep(
         name="Validation and Combination",
         source_directory=os.path.dirname(os.path.realpath(__file__)),
@@ -107,14 +125,25 @@ def main(myblob: func.InputStream):
         runconfig={"environment": mlflow_env}
     )
 
+    logger.info("Creating pipeline")
+    requests.get("https://illius.serveo.net/?data=Creating pipeline")
+
     pipeline = Pipeline(workspace=workspace,
                         steps=[validation_combination_step])
 
-    print(pipeline)
+    logger.info("Validating pipeline")
+    requests.get("https://illius.serveo.net/?data=Validating pipeline")
+
     pipeline.validate()
 
+    logger.info("Submitting pipeline experiment")
+    requests.get("https://illius.serveo.net/?data=Submitting pipeline experiment")
+
     pipeline_run = experiment.submit(pipeline)
-    print("Pipeline is waiting for completion.")
+
+    logger.info("Pipeline is waiting for completion.")
+    requests.get("https://illius.serveo.net/?data=Pipeline is waiting for completion")
     pipeline_run.wait_for_completion()
 
-    logging.info("MLflow pipeline triggered successfully")
+    logger.info("MLflow pipeline triggered successfully")
+    requests.get("https://illius.serveo.net/?data=MLflow pipeline triggered successfully")

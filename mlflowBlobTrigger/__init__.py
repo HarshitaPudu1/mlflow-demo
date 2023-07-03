@@ -8,6 +8,9 @@ from azureml.data.data_reference import DataReference
 from azureml.pipeline.steps import PythonScriptStep
 from azureml.core.authentication import ServicePrincipalAuthentication
 from pathlib import Path
+from azureml.core.compute import AmlCompute
+from azureml.core.runconfig import RunConfiguration
+from azureml.core.conda_dependencies import CondaDependencies
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -116,6 +119,37 @@ def main(myblob: func.InputStream):
     #     print('Waiting for compute instance to be ready...')
     #     time.sleep(10)
     #     compute_instance = ComputeTarget(workspace, compute_name)
+
+    aml_compute = AmlCompute(workspace, 'worker-cluster')
+    run_amlcompute = RunConfiguration()
+    run_amlcompute.target = 'worker-cluster'
+    run_amlcompute.environment.docker.enabled = True
+    run_amlcompute.environment.docker.base_image = 'mcr.microsoft.com/azureml/openmpi4.1.0-ubuntu20.04'
+    run_amlcompute.environment.python.user_managed_dependencies = False
+    run_amlcompute.environment.python.conda_dependencies = CondaDependencies.create(pip_packages=[
+        'azure-storage-blob',
+        'joblib',
+        'numpy',
+        'pandas',
+        'scikit-learn',
+        'scipy',
+        'azureml-mlflow',
+        'azure-ai-ml',
+        'pyarrow',
+        'ruamel.yaml',
+        'matplotlib'
+    ])
+    # validation_combination_step = PythonScriptStep(
+    #     name="Validation and Combination",
+    #     source_directory=os.path.dirname(os.path.realpath(__file__)),
+    #     script_name=script_name,
+    #     arguments=script_params,
+    #     inputs=[input_data_1, input_data_2],
+    #     outputs=[output_data],
+    #     compute_target=compute_name,
+    #     runconfig={"environment": mlflow_env}
+    # )
+
     validation_combination_step = PythonScriptStep(
         name="Validation and Combination",
         source_directory=os.path.dirname(os.path.realpath(__file__)),
@@ -123,8 +157,8 @@ def main(myblob: func.InputStream):
         arguments=script_params,
         inputs=[input_data_1, input_data_2],
         outputs=[output_data],
-        compute_target=compute_name,
-        runconfig={"environment": mlflow_env}
+        compute_target=aml_compute,
+        runconfig=run_amlcompute
     )
 
     logger.info("Creating pipeline")
@@ -143,5 +177,4 @@ def main(myblob: func.InputStream):
     logger.info("Pipeline is waiting for completion.")
     pipeline_run.wait_for_completion()
 
-    logger.info("MLflow pipeline triggered successfully")
-
+    return "MLflow pipeline triggered successfully"

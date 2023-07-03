@@ -14,26 +14,20 @@ logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
 
 
-def authenticate_azure_ml():
-    # Use InteractiveLoginAuthentication to authenticate with Azure
-    interactive_auth = InteractiveLoginAuthentication()
-    creds, _, _ = interactive_auth._authenticate(None)
-    return creds
-
-
 def main(myblob: func.InputStream):
     # Set up Azure ML workspace and experiment
     logger.info("Setting up Azure ML workspace and experiment")
 
     # Authenticate with Azure
-    credentials = authenticate_azure_ml()
+    interactive_auth = InteractiveLoginAuthentication(
+        tenant_id="24b1c19c-1155-44af-bba1-549638587676")
 
     workspace = Workspace.get(
         name="demomlflowworkspace",
         subscription_id="3cfa681b-9a6f-4abf-9e24-e4f15f8da808",
         resource_group="demoAzure-Functions",
-        auth=credentials
-    )
+        auth=interactive_auth
+                )
     experiment = Experiment(workspace=workspace, name="taskmlflow")
 
     logger.info("Registering Azure Blob datastores")
@@ -146,5 +140,4 @@ def main(myblob: func.InputStream):
     pipeline_run.wait_for_completion()
 
     logger.info("MLflow pipeline triggered successfully")
-    
 

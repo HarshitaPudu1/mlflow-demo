@@ -1,3 +1,4 @@
+import os
 import logging
 import azure.functions as func
 import azureml.core
@@ -5,9 +6,8 @@ from azureml.core import Workspace, Experiment, Datastore
 from azureml.pipeline.core import PipelineData, Pipeline
 from azureml.data.data_reference import DataReference
 from azureml.pipeline.steps import PythonScriptStep
+from azureml.core.authentication import ServicePrincipalAuthentication
 from pathlib import Path
-import os
-from azureml.core.authentication import InteractiveLoginAuthentication
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)
@@ -18,16 +18,20 @@ def main(myblob: func.InputStream):
     # Set up Azure ML workspace and experiment
     logger.info("Setting up Azure ML workspace and experiment")
 
+
     # Authenticate with Azure
-    interactive_auth = InteractiveLoginAuthentication(
-        tenant_id="24b1c19c-1155-44af-bba1-549638587676")
+    tenant_id="24b1c19c-1155-44af-bba1-549638587676"
+    service_principal_id = "970e2d10-b0dc-4821-9bc5-e0145f263e76"
+    service_principal_password = "Sr48Q~bd7ZQKghY3~rGwXsiMIO7M2sTPeLczXa-1"
+    
+    auth = ServicePrincipalAuthentication(tenant_id, service_principal_id, service_principal_password)
 
     workspace = Workspace.get(
         name="demomlflowworkspace",
         subscription_id="3cfa681b-9a6f-4abf-9e24-e4f15f8da808",
         resource_group="demoAzure-Functions",
-        auth=interactive_auth
-                )
+        auth=auth
+        )
     experiment = Experiment(workspace=workspace, name="taskmlflow")
 
     logger.info("Registering Azure Blob datastores")

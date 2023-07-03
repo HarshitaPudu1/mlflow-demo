@@ -7,7 +7,7 @@ from azureml.data.data_reference import DataReference
 from azureml.pipeline.steps import PythonScriptStep
 from pathlib import Path
 import os
-from azure.common.credentials import InteractiveLoginAuthentication
+from azureml.core.authentication import InteractiveLoginAuthentication
 
 # Configure logging
 logging.basicConfig(level=logging.INFO)

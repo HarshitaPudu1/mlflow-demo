@@ -5,7 +5,7 @@ import datetime
 
 def validate_csv(file_path):
     # Load CSV file into a DataFrame
-    df = pd.read_csv(file_path)
+    df = pd.read_csv(file_path, encoding='utf8')
     return df
 
 def combine_csv(input1, input2, output):

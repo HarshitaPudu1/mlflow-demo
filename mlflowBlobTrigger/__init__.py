@@ -190,7 +190,4 @@ def main(myblob: func.InputStream):
 
     pipeline_run = experiment.submit(pipeline)
 
-    logger.info("Pipeline is waiting for completion.")
-    pipeline_run.wait_for_completion()
-
     return "MLflow pipeline triggered successfully"
